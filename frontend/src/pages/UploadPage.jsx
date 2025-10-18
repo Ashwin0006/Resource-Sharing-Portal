@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
 import api from "../api";
 
 export default function UploadPage() {
@@ -8,6 +9,7 @@ export default function UploadPage() {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
+  const { isAuthenticated, user } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,9 +42,21 @@ export default function UploadPage() {
     }
   };
 
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-xl mx-auto mt-10 bg-white shadow-lg rounded-2xl p-6 text-center">
+        <h1 className="text-2xl font-bold mb-4">Upload Resource</h1>
+        <p className="text-gray-600">Please login to upload resources.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-xl mx-auto mt-10 bg-white shadow-lg rounded-2xl p-6">
-      <h1 className="text-2xl font-bold mb-4 text-center">Upload Resource</h1>
+      <div className="text-center mb-4">
+        <h1 className="text-2xl font-bold">Upload Resource</h1>
+        <p className="text-gray-600">Uploading as <span className="font-semibold text-blue-600">{user?.username}</span></p>
+      </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input

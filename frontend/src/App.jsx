@@ -1,20 +1,26 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import Navbar from "./components/Navbar";
+import BrowsePage from "./pages/BrowsePage";
+import UploadPage from "./pages/UploadPage";
+import MyResourcesPage from "./pages/MyResourcesPage";
+import AuthPage from "./pages/AuthPage";
 
 function App() {
-  const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    axios.get("http://localhost:5000/api")
-      .then(res => setMessage(res.data.message))
-      .catch(err => console.error(err));
-  }, []);
-
   return (
-    <div className="h-screen flex flex-col items-center justify-center bg-gray-50">
-      <h1 className="text-3xl font-bold mb-4">Resource Portal</h1>
-      <p className="text-gray-700">{message}</p>
-    </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <div className="min-h-screen bg-gray-50">
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<BrowsePage />} />
+            <Route path="/upload" element={<UploadPage />} />
+            <Route path="/my-resources" element={<MyResourcesPage />} />
+            <Route path="/auth" element={<AuthPage />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

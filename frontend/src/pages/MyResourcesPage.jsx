@@ -4,16 +4,16 @@ import ResourceCard from "../components/ResourceCard";
 import MultiSearch from "../components/MultiSearch";
 import api from "../api";
 
-export default function BrowsePage() {
+export default function MyResourcesPage() {
   const [resources, setResources] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const fetchResources = useCallback(async (query = "") => {
     setLoading(true);
     try {
-      const res = await api.get(`/resources?search=${query}`);
+      const res = await api.get(`/resources/my-resources?search=${query}`);
       setResources(res.data);
     } catch (err) {
       console.error("Error fetching resources:", err);
@@ -23,30 +23,44 @@ export default function BrowsePage() {
   }, []);
 
   useEffect(() => {
-    fetchResources();
-  }, [fetchResources]);
+    if (isAuthenticated) {
+      fetchResources();
+    }
+  }, [isAuthenticated, fetchResources]);
 
   const handleSearch = useCallback((query) => {
     setSearchQuery(query);
     fetchResources(query);
   }, [fetchResources]);
 
+  const handleResourceUpdate = (updatedResource) => {
+    setResources(resources.map(res => 
+      res._id === updatedResource._id ? updatedResource : res
+    ));
+  };
+
+  const handleResourceDelete = (resourceId) => {
+    setResources(resources.filter(res => res._id !== resourceId));
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-5xl mx-auto mt-10 px-4 text-center">
+        <h1 className="text-3xl font-bold mb-4">My Resources</h1>
+        <p className="text-gray-600">Please login to view your resources.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-5xl mx-auto mt-10 px-4">
-      <div className="text-center mb-6">
-        <h1 className="text-3xl font-bold mb-2">Browse Resources</h1>
-        {isAuthenticated && (
-          <p className="text-gray-600">
-            Welcome back, <span className="font-semibold text-blue-600">{user?.username}</span>!
-          </p>
-        )}
-      </div>
+      <h1 className="text-3xl font-bold mb-6 text-center">My Resources</h1>
 
       {/* Multi-Keyword Search */}
       <div className="max-w-2xl mx-auto mb-8">
         <MultiSearch
           onSearch={handleSearch}
-          placeholder="Search by keywords (must match ALL keywords)..."
+          placeholder="Search your resources (must match ALL keywords)..."
         />
       </div>
 
@@ -59,7 +73,9 @@ export default function BrowsePage() {
             <ResourceCard
               key={res._id}
               resource={res}
-              showActions={false}
+              onUpdate={handleResourceUpdate}
+              onDelete={handleResourceDelete}
+              showActions={true}
             />
           ))}
         </div>

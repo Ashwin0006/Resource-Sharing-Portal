@@ -6,7 +6,14 @@ const resourceSchema = new mongoose.Schema(
     description: { type: String },
     tags: [{ type: String }],
     fileUrl: { type: String, required: true },
-    uploadedBy: { type: String, default: "Anonymous" },
+    uploadedBy: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "User", 
+      required: true 
+    },
+    originalFileName: { type: String, required: true },
+    fileSize: { type: Number },
+    mimeType: { type: String }
   },
   { timestamps: true }
 );
