@@ -49,7 +49,7 @@ export default function ResourceCard({ resource, onUpdate, onDelete, showActions
 
         <div className="mt-3 flex justify-between items-center">
           <a
-            href={`http://localhost:5000${resource.fileUrl}`}
+            href={resource.fileUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-pink-400 font-medium hover:text-pink-300 underline transition-colors duration-200"
