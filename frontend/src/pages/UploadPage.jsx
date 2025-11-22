@@ -35,7 +35,7 @@ export default function UploadPage() {
       setTags("");
       setFile(null);
     } catch (err) {
-      setMessage("❌ Upload failed. Please try again.");
+      setMessage("Upload failed. Please try again.");
       console.error(err);
     } finally {
       setUploading(false);
@@ -44,64 +44,72 @@ export default function UploadPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="max-w-xl mx-auto mt-10 bg-white shadow-lg rounded-2xl p-6 text-center">
-        <h1 className="text-2xl font-bold mb-4">Upload Resource</h1>
-        <p className="text-gray-600">Please login to upload resources.</p>
+      <div className="max-w-xl mx-auto mt-10 bg-black/50 backdrop-blur-md shadow-2xl rounded-3xl p-8 text-center border border-pink-500/30">
+        <h1 className="text-3xl font-bold mb-6 text-white drop-shadow-lg">Upload Resource</h1>
+        <p className="text-white">Please login to upload resources.</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-xl mx-auto mt-10 bg-white shadow-lg rounded-2xl p-6">
-      <div className="text-center mb-4">
-        <h1 className="text-2xl font-bold">Upload Resource</h1>
-        <p className="text-gray-600">Uploading as <span className="font-semibold text-blue-600">{user?.username}</span></p>
+    <div className="max-w-xl mx-auto mt-10 bg-black/50 backdrop-blur-md shadow-2xl rounded-3xl p-8 border border-pink-500/30">
+      <div className="text-center mb-6">
+        <h1 className="text-3xl font-bold text-white drop-shadow-lg">Upload Resource</h1>
+        <p className="text-orange-300">Uploading as <span className="font-semibold text-pink-400">{user?.username}</span></p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="border p-2 rounded-lg"
-          required
-        />
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full p-3 rounded-xl bg-purple-900/50 backdrop-blur-sm border border-orange-500/50 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+            required
+          />
+        </div>
 
-        <textarea
-          placeholder="Description (optional)"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="border p-2 rounded-lg resize-none"
-          rows="3"
-        ></textarea>
+        <div className="relative">
+          <textarea
+            placeholder="Description (optional)"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full p-3 rounded-xl bg-purple-900/50 backdrop-blur-sm border border-orange-500/50 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300 resize-none"
+            rows="3"
+          ></textarea>
+        </div>
 
-        <input
-          type="text"
-          placeholder="Tags (comma separated)"
-          value={tags}
-          onChange={(e) => setTags(e.target.value)}
-          className="border p-2 rounded-lg"
-        />
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Tags (comma separated)"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            className="w-full p-3 rounded-xl bg-purple-900/50 backdrop-blur-sm border border-orange-500/50 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+          />
+        </div>
 
-        <input
-          type="file"
-          onChange={(e) => setFile(e.target.files[0])}
-          className="border p-2 rounded-lg"
-          required
-        />
+        <div className="relative">
+          <input
+            type="file"
+            onChange={(e) => setFile(e.target.files[0])}
+            className="w-full p-3 rounded-xl bg-purple-900/50 backdrop-blur-sm border border-orange-500/50 text-white file:bg-pink-500 file:text-white file:border-none file:rounded-lg file:px-3 file:py-1 file:mr-3 file:hover:bg-pink-600 transition-all duration-300"
+            required
+          />
+        </div>
 
         <button
           type="submit"
           disabled={uploading}
-          className="bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          className="bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 rounded-xl hover:from-pink-600 hover:to-purple-700 disabled:opacity-50 transition-all duration-300 transform hover:scale-105 shadow-lg border border-pink-400/50"
         >
           {uploading ? "Uploading..." : "Upload"}
         </button>
       </form>
 
       {message && (
-        <p className="text-center mt-4 text-gray-700 font-medium">{message}</p>
+        <p className="text-center mt-6 text-white font-medium bg-green-500/20 p-2 rounded-lg border border-green-400/50">{message}</p>
       )}
     </div>
   );

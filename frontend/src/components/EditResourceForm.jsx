@@ -55,21 +55,21 @@ export default function EditResourceForm({ resource, onClose, onSuccess }) {
   if (!resource) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Edit Resource</h2>
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-black/80 backdrop-blur-md rounded-3xl p-8 w-full max-w-md mx-4 border border-pink-500/30 shadow-2xl">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-white drop-shadow-lg">Edit Resource</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl"
+            className="text-orange-300 hover:text-yellow-300 text-3xl transition-colors duration-200"
           >
             ×
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-orange-300 mb-2">
               Title *
             </label>
             <input
@@ -77,26 +77,26 @@ export default function EditResourceForm({ resource, onClose, onSuccess }) {
               name="title"
               value={formData.title}
               onChange={handleChange}
-              className="border p-2 rounded-lg w-full"
+              className="w-full p-3 rounded-xl bg-purple-900/50 backdrop-blur-sm border border-orange-500/50 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-orange-300 mb-2">
               Description
             </label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
-              className="border p-2 rounded-lg w-full resize-none"
+              className="w-full p-3 rounded-xl bg-purple-900/50 backdrop-blur-sm border border-orange-500/50 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300 resize-none"
               rows="3"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-orange-300 mb-2">
               Tags (comma separated)
             </label>
             <input
@@ -105,22 +105,22 @@ export default function EditResourceForm({ resource, onClose, onSuccess }) {
               value={formData.tags}
               onChange={handleChange}
               placeholder="e.g., javascript, react, tutorial"
-              className="border p-2 rounded-lg w-full"
+              className="w-full p-3 rounded-xl bg-purple-900/50 backdrop-blur-sm border border-orange-500/50 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
             />
           </div>
 
-          <div className="flex gap-2 pt-2">
+          <div className="flex gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600"
+              className="flex-1 bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 rounded-xl hover:from-gray-700 hover:to-gray-800 transition-all duration-300 transform hover:scale-105 shadow-lg border border-gray-500/50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              className="flex-1 bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 rounded-xl hover:from-pink-600 hover:to-purple-700 disabled:opacity-50 transition-all duration-300 transform hover:scale-105 shadow-lg border border-pink-400/50"
             >
               {loading ? "Updating..." : "Update"}
             </button>
@@ -128,8 +128,8 @@ export default function EditResourceForm({ resource, onClose, onSuccess }) {
         </form>
 
         {message && (
-          <p className={`text-center mt-4 font-medium ${
-            message.includes("✅") ? "text-green-600" : "text-red-600"
+          <p className={`text-center mt-6 font-medium p-2 rounded-lg border ${
+            message.includes("✅") ? "text-green-300 bg-green-500/20 border-green-400/50" : "text-red-300 bg-red-500/20 border-red-400/50"
           }`}>
             {message}
           </p>

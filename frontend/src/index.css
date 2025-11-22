@@ -1,1 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 @import "tailwindcss";
+
+@font-face {
+  font-family: 'Cyberspace';
+  src: url('/assets/fonts/cyberspace.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'GameFont7';
+  src: url('/assets/fonts/game_font_7.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Hyperion';
+  src: url('/assets/fonts/hyperion.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Cynosure';
+  src: url('/assets/fonts/Cynosure-ovOWx.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'CynosureStraight';
+  src: url('/assets/fonts/CynosureStraight-4nMJ4.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Sddystopiandemo';
+  src: url('/assets/fonts/Sddystopiandemo-GO7xa.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Valorax';
+  src: url('/assets/fonts/Valorax-lg25V.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Interceptor';
+  src: url('/assets/fonts/Interceptor.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'MonofontoRg';
+  src: url('/assets/fonts/monofonto rg.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.tag {
+  font-family: sans-serif;
+}
+
+.edit-btn, .del-btn {
+  font-family: 'Interceptor';
+}
+
+/* Cyberpunk color variables */
+:root {
+   --cyber-pink: #ff00ff;
+   --cyber-purple: #800080;
+   --cyber-orange: #ff4500;
+   --cyber-white: #ffffff;
+   --cyber-yellow: #ffff00;
+   --cyber-blue: #0000ff;
+ 
+   /* Semi-transparent versions (50% opacity) */
+   --cyber-pink-50: rgba(255, 0, 255, 0.5);
+   --cyber-purple-50: rgba(128, 0, 128, 0.5);
+   --cyber-orange-50: rgba(255, 69, 0, 0.5);
+   --cyber-white-50: rgba(255, 255, 255, 0.5);
+   --cyber-yellow-50: rgba(255, 255, 0, 0.5);
+   --cyber-blue-50: rgba(0, 0, 255, 0.5);
+ }
+
+/* Global font styles */
+body {
+  font-family: 'Interceptor', sans-serif;
+  background-image: url('/assets/images/background.png'), linear-gradient(135deg, var(--cyber-purple), var(--cyber-pink), var(--cyber-orange), var(--cyber-yellow), var(--cyber-blue));
+  background-size: cover, 400% 400%;
+  background-position: center, 0% 50%;
+  background-attachment: fixed, fixed;
+  background-repeat: no-repeat, no-repeat;
+  animation: gradientShift 15s ease infinite;
+  min-height: 100vh;
+  margin: 0;
+  color: white;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Sddystopiandemo', sans-serif;
+}
+
+button {
+  font-family: 'GameFont7', sans-serif;
+}
+.hexagon-wrapper {
+   position: relative;
+   background: rgba(128, 0, 128, 0.7);
+   clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 
+                      75% 100%, 25% 100%, 0% 50%);
+   display: inline-block;
+   width: 100%;
+   max-width: 40rem;
+   margin: 0 auto;
+   z-index: 0;
+   overflow: hidden;
+ }
+ 
+ /* ✨ Gradient border with subtle glow */
+ .hexagon-wrapper::before {
+   content: '';
+   position: absolute;
+   inset: 0;
+   padding: 3px; /* border thickness */
+   background: linear-gradient(135deg,
+               var(--cyber-purple-50),
+               var(--cyber-pink-50),
+               var(--cyber-orange-50),
+               var(--cyber-blue-50));
+   background-size: 400% 400%;
+   animation: gradientShift 12s ease infinite;
+   clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 
+                      75% 100%, 25% 100%, 0% 50%);
+ 
+   /* 🌈 subtle glow */
+   filter: blur(6px) brightness(1.2);
+   opacity: 0.6;
+ }
+ 
+ /* 🌊 animated gradient motion */
+ @keyframes gradientShift {
+   0% { background-position: 0% 50%; }
+   50% { background-position: 100% 50%; }
+   100% { background-position: 0% 50%; }
+ }
+ 
+.hexagon-content {
+  backdrop-filter: blur(8px);
+  padding: 2rem;
+  color: var(--cyber-white);
+  max-width: 28rem;
+  margin: 0 auto;
+}
+
+.animated-navbar {
+  background: linear-gradient(45deg, var(--cyber-pink-50), var(--cyber-purple-50), var(--cyber-orange-50), var(--cyber-blue-50));
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  backdrop-filter: blur(8px);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}

@@ -46,27 +46,27 @@ export default function MyResourcesPage() {
   if (!isAuthenticated) {
     return (
       <div className="max-w-5xl mx-auto mt-10 px-4 text-center">
-        <h1 className="text-3xl font-bold mb-4">My Resources</h1>
-        <p className="text-gray-600">Please login to view your resources.</p>
+        <h1 className="text-3xl font-bold mb-4 text-white">My Resources</h1>
+        <p className="text-white">Please login to view your resources.</p>
       </div>
     );
   }
 
   return (
     <div className="max-w-5xl mx-auto mt-10 px-4">
-      <h1 className="text-3xl font-bold mb-6 text-center">My Resources</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center text-white">My Resources</h1>
 
       {/* Multi-Keyword Search */}
       <div className="max-w-2xl mx-auto mb-8">
         <MultiSearch
           onSearch={handleSearch}
-          placeholder="Search your resources (must match ALL keywords)..."
+          placeholder="Search your resources"
         />
       </div>
 
       {/* Loading Indicator */}
       {loading ? (
-        <p className="text-center text-gray-500">Loading resources...</p>
+        <p className="text-center text-white">Loading resources...</p>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {resources.map((res) => (
@@ -82,7 +82,7 @@ export default function MyResourcesPage() {
       )}
 
       {!loading && resources.length === 0 && (
-        <div className="text-center text-gray-500 mt-4">
+        <div className="text-center text-white mt-4">
           {searchQuery ? (
             <p>No resources found matching your search criteria.</p>
           ) : (
@@ -92,7 +92,7 @@ export default function MyResourcesPage() {
       )}
 
       {!loading && resources.length > 0 && searchQuery && (
-        <div className="text-center text-gray-600 mt-4">
+        <div className="text-center text-white mt-4">
           <p>Found {resources.length} resource{resources.length !== 1 ? 's' : ''} matching your search.</p>
         </div>
       )}

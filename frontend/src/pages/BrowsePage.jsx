@@ -34,10 +34,10 @@ export default function BrowsePage() {
   return (
     <div className="max-w-5xl mx-auto mt-10 px-4">
       <div className="text-center mb-6">
-        <h1 className="text-3xl font-bold mb-2">Browse Resources</h1>
+        <h1 className="text-3xl font-bold mb-2 text-white">Browse Resources</h1>
         {isAuthenticated && (
-          <p className="text-gray-600">
-            Welcome back, <span className="font-semibold text-blue-600">{user?.username}</span>!
+          <p className="text-orange-300">
+            Welcome back, <span className="font-semibold text-pink-400">{user?.username}</span>!
           </p>
         )}
       </div>
@@ -46,13 +46,13 @@ export default function BrowsePage() {
       <div className="max-w-2xl mx-auto mb-8">
         <MultiSearch
           onSearch={handleSearch}
-          placeholder="Search by keywords (must match ALL keywords)..."
+          placeholder="Search by keywords"
         />
       </div>
 
       {/* Loading Indicator */}
       {loading ? (
-        <p className="text-center text-gray-500">Loading resources...</p>
+        <p className="text-center text-white">Loading resources...</p>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {resources.map((res) => (
@@ -66,7 +66,7 @@ export default function BrowsePage() {
       )}
 
       {!loading && resources.length === 0 && (
-        <div className="text-center text-gray-500 mt-4">
+        <div className="text-center text-white mt-4">
           {searchQuery ? (
             <p>No resources found matching your search criteria.</p>
           ) : (
@@ -76,7 +76,7 @@ export default function BrowsePage() {
       )}
 
       {!loading && resources.length > 0 && searchQuery && (
-        <div className="text-center text-gray-600 mt-4">
+        <div className="text-center text-white mt-4">
           <p>Found {resources.length} resource{resources.length !== 1 ? 's' : ''} matching your search.</p>
         </div>
       )}

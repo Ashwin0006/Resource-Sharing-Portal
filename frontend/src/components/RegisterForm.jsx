@@ -38,85 +38,95 @@ export default function RegisterForm({ onSwitchToLogin }) {
     }
 
     const result = await register(
-      formData.username, 
-      formData.email, 
+      formData.username,
+      formData.email,
       formData.password
     );
-    
+
     if (!result.success) {
       setMessage(result.message);
     }
-    
+
     setLoading(false);
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white shadow-lg rounded-2xl p-6">
-      <h1 className="text-2xl font-bold mb-4 text-center">Register</h1>
+    <div className="hexagon-wrapper">
+      <div className="hexagon-content">
+        <h1 className="text-3xl font-bold mb-6 text-center text-white drop-shadow-lg">Register</h1>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          type="text"
-          name="username"
-          placeholder="Username"
-          value={formData.username}
-          onChange={handleChange}
-          className="border p-2 rounded-lg"
-          required
-        />
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+          <div className="relative">
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              value={formData.username}
+              onChange={handleChange}
+              className="w-full p-3 rounded-xl bg-purple-900/50 backdrop-blur-sm border border-orange-500/50 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+              required
+            />
+          </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          className="border p-2 rounded-lg"
-          required
-        />
+          <div className="relative">
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full p-3 rounded-xl bg-purple-900/50 backdrop-blur-sm border border-orange-500/50 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+              required
+            />
+          </div>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          className="border p-2 rounded-lg"
-          required
-        />
+          <div className="relative">
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full p-3 rounded-xl bg-purple-900/50 backdrop-blur-sm border border-orange-500/50 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+              required
+            />
+          </div>
 
-        <input
-          type="password"
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          className="border p-2 rounded-lg"
-          required
-        />
+          <div className="relative">
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className="w-full p-3 rounded-xl bg-purple-900/50 backdrop-blur-sm border border-orange-500/50 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
+              required
+            />
+          </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
-        >
-          {loading ? "Registering..." : "Register"}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-3 rounded-xl hover:from-pink-600 hover:to-purple-700 disabled:opacity-50 transition-all duration-300 transform hover:scale-105 shadow-lg border border-pink-400/50"
+          >
+            {loading ? "Registering..." : "Register"}
+          </button>
+        </form>
 
-      {message && (
-        <p className="text-center mt-4 text-red-600 font-medium">{message}</p>
-      )}
+        {message && (
+          <p className="text-center mt-6 text-white font-medium bg-red-500/20 p-2 rounded-lg border border-red-400/50">{message}</p>
+        )}
 
-      <p className="text-center mt-4 text-gray-600">
-        Already have an account?{" "}
-        <button
-          onClick={onSwitchToLogin}
-          className="text-blue-600 hover:underline"
-        >
-          Login here
-        </button>
-      </p>
+        <p className="text-center mt-6 text-white">
+          Already have an account?{" "}
+          <button
+            onClick={onSwitchToLogin}
+            className="text-white hover:text-yellow-300 underline transition-colors duration-200"
+          >
+            Login here
+          </button>
+        </p>
+      </div>
     </div>
   );
 }

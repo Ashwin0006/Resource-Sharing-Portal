@@ -64,11 +64,11 @@ export default function MultiSearch({ onSearch, placeholder = "Search by keyword
           onChange={(e) => setInputValue(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder={placeholder}
-          className="flex-1 border p-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="flex-1 p-3 rounded-xl bg-purple-900/50 backdrop-blur-sm border border-orange-500/50 text-white placeholder-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300"
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
+          className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-3 rounded-xl hover:from-pink-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg border border-pink-400/50"
         >
           Add
         </button>
@@ -80,12 +80,12 @@ export default function MultiSearch({ onSearch, placeholder = "Search by keyword
           {searchKeywords.map((keyword, index) => (
             <div
               key={index}
-              className="group bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center gap-2 hover:bg-blue-200 transition-colors"
+              className="group bg-pink-500/20 text-white px-3 py-1 rounded-full text-sm flex items-center gap-2 hover:bg-pink-500/30 transition-colors border border-pink-400/50"
             >
               <span>{keyword}</span>
               <button
                 onClick={() => removeKeyword(keyword)}
-                className="text-blue-600 hover:text-blue-800 opacity-0 group-hover:opacity-100 transition-opacity text-xs font-bold"
+                className="text-pink-300 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity text-xs font-bold"
                 title="Remove keyword"
               >
                 ×
@@ -95,7 +95,7 @@ export default function MultiSearch({ onSearch, placeholder = "Search by keyword
           {searchKeywords.length > 1 && (
             <button
               onClick={() => setSearchKeywords([])}
-              className="text-gray-500 hover:text-gray-700 text-sm underline"
+              className="text-orange-300 hover:text-yellow-300 text-sm underline transition-colors duration-200"
             >
               Clear all
             </button>
@@ -105,13 +105,13 @@ export default function MultiSearch({ onSearch, placeholder = "Search by keyword
 
       {/* Search Info */}
       {searchKeywords.length > 0 && (
-        <div className="text-sm text-gray-600 mb-4">
+        <div className="text-sm text-white mb-4">
           <div>Searching for: {searchKeywords.length} keyword{searchKeywords.length > 1 ? 's' : ''}</div>
-          {searchKeywords.length > 1 && (
-            <div className="text-blue-600 font-medium">
-              💡 Resources must contain ALL keywords
+          {/* {searchKeywords.length > 1 && (
+            <div className="text-yellow-300 font-medium">
+              Resources must contain ALL keywords
             </div>
-          )}
+          )} */}
         </div>
       )}
     </div>
