@@ -148,10 +148,12 @@ router.delete("/:id", authenticateToken, async (req, res) => {
   try {
     const resource = await Resource.findById(req.params.id);
 
-    if (!resource)
-      return res
-        .status(404)
-        .json({ success: false, message: "Resource not found" });
+    if (!resource) {
+      return res.status(404).json({
+        success: false,
+        message: "Resource not found",
+      });
+    }
 
     if (resource.uploadedBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({
@@ -160,21 +162,31 @@ router.delete("/:id", authenticateToken, async (req, res) => {
       });
     }
 
-    // Remove from Cloudinary
-    await cloudinary.uploader.destroy(resource.cloudinaryId, {
-      resource_type: "auto",
-    });
+    // 🛠 Cloudinary delete (with safety try/catch)
+    try {
+      await cloudinary.uploader.destroy(resource.cloudinaryId, {
+        resource_type: "raw", // since we decided PDFs only
+      });
+    } catch (err) {
+      console.warn("Cloudinary delete failed:", err.message);
+    }
 
-    // Remove from MongoDB
-    await Resource.findByIdAndDelete(req.params.id);
+    // Always delete DB entry even if Cloudinary fails
+    await Resource.findByIdAndDelete(resource._id);
 
-    res.json({
+    return res.json({
       success: true,
-      message: "Resource deleted successfully",
+      message: "Resource removed successfully",
     });
+
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error("Delete Route Error:", err.message);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while deleting resource",
+    });
   }
 });
+
 
 export default router;
