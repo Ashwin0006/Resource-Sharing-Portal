@@ -2,234 +2,178 @@ import express from "express";
 import upload from "../middleware/upload.js";
 import Resource from "../models/Resource.js";
 import { authenticateToken } from "../middleware/auth.js";
+import { v2 as cloudinary } from "cloudinary";
 
 const router = express.Router();
 
-// Upload new resource (protected route)
-router.post("/upload", authenticateToken, upload.single("file"), async (req, res) => {
-  try {
-    const { title, description, tags } = req.body;
-    const fileUrl = `/uploads/${req.file.filename}`;
-    const tagArray = tags ? tags.split(",").map(t => t.trim()) : [];
+/* ============================================================= 
+   📌 Upload Resource (Authenticated)
+   Supports: PDF, Images, Docs, ZIP — stored in Cloudinary
+============================================================= */
+router.post(
+  "/upload",
+  authenticateToken,
+  upload.single("file"),
+  async (req, res) => {
+    try {
+      const { title, description, tags } = req.body;
 
-    const resource = new Resource({
-      title,
-      description,
-      tags: tagArray,
-      fileUrl,
-      uploadedBy: req.user._id,
-      originalFileName: req.file.originalname,
-      fileSize: req.file.size,
-      mimeType: req.file.mimetype
-    });
+      if (!req.file || !req.file.path) {
+        return res.status(400).json({
+          success: false,
+          message: "File upload failed",
+        });
+      }
 
-    await resource.save();
-    
-    // Populate user info
-    await resource.populate("uploadedBy", "username email");
-    
-    res.status(201).json({ success: true, resource });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+      const tagArray = tags
+        ? tags.split(",").map((tag) => tag.trim().toLowerCase())
+        : [];
+
+      const resource = await Resource.create({
+        title,
+        description,
+        tags: tagArray,
+        fileUrl: req.file.path, // Cloudinary URL
+        cloudinaryId: req.file.filename, // Unique ID to delete later
+        uploadedBy: req.user._id,
+        mimeType: req.file.mimetype,
+        originalFileName: req.file.originalname,
+        fileSize: req.file.size,
+      });
+
+      await resource.populate("uploadedBy", "username email");
+
+      res.status(201).json({
+        success: true,
+        message: "Resource uploaded successfully",
+        resource,
+      });
+    } catch (err) {
+      res.status(500).json({ success: false, message: err.message });
+    }
   }
-});
+);
 
-// Get all resources
+/* ============================================================= 
+   📌 Get All Public Resources
+============================================================= */
 router.get("/", async (req, res) => {
   try {
     const { search } = req.query;
     let query = {};
 
     if (search) {
-      // Handle multiple search keywords
-      const keywords = search.split(',').map(keyword => keyword.trim()).filter(keyword => keyword.length > 0);
-      
-      if (keywords.length > 0) {
-        // Use AND logic - resources must match ALL keywords
-        const keywordRegexes = keywords.map(keyword => new RegExp(keyword, 'i'));
-        
-        query = {
-          $and: [
-            {
-              $or: [
-                { tags: { $in: keywordRegexes } },
-                { title: { $in: keywordRegexes } },
-                { description: { $in: keywordRegexes } }
-              ]
-            }
-          ]
-        };
-        
-        // For each keyword, ensure it matches at least one field
-        keywords.forEach(keyword => {
-          const keywordRegex = new RegExp(keyword, 'i');
-          query.$and.push({
-            $or: [
-              { tags: keywordRegex },
-              { title: keywordRegex },
-              { description: keywordRegex }
-            ]
-          });
-        });
-      }
+      const keywords = search
+        .split(",")
+        .map((keyword) => keyword.trim())
+        .filter((keyword) => keyword.length > 0)
+        .map((keyword) => new RegExp(keyword, "i"));
+
+      query.tags = { $in: keywords };
     }
 
     const resources = await Resource.find(query)
       .populate("uploadedBy", "username email")
       .sort({ createdAt: -1 });
+
     res.json(resources);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-// Get user's own resources
+/* ============================================================= 
+   📌 Get Logged-in User's Resources
+============================================================= */
 router.get("/my-resources", authenticateToken, async (req, res) => {
   try {
-    const { search } = req.query;
-    let query = { uploadedBy: req.user._id };
-
-    if (search) {
-      // Handle multiple search keywords for user's resources
-      const keywords = search.split(',').map(keyword => keyword.trim()).filter(keyword => keyword.length > 0);
-      
-      if (keywords.length > 0) {
-        // Use AND logic - resources must match ALL keywords
-        const keywordRegexes = keywords.map(keyword => new RegExp(keyword, 'i'));
-        
-        query = {
-          uploadedBy: req.user._id,
-          $and: [
-            {
-              $or: [
-                { tags: { $in: keywordRegexes } },
-                { title: { $in: keywordRegexes } },
-                { description: { $in: keywordRegexes } }
-              ]
-            }
-          ]
-        };
-        
-        // For each keyword, ensure it matches at least one field
-        keywords.forEach(keyword => {
-          const keywordRegex = new RegExp(keyword, 'i');
-          query.$and.push({
-            $or: [
-              { tags: keywordRegex },
-              { title: keywordRegex },
-              { description: keywordRegex }
-            ]
-          });
-        });
-      }
-    }
-
-    const resources = await Resource.find(query)
+    const resources = await Resource.find({ uploadedBy: req.user._id })
       .populate("uploadedBy", "username email")
       .sort({ createdAt: -1 });
+
     res.json(resources);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-// Update resource (only by owner)
+/* ============================================================= 
+   📌 Update Resource
+============================================================= */
 router.put("/:id", authenticateToken, async (req, res) => {
   try {
     const { title, description, tags } = req.body;
-    const resourceId = req.params.id;
+    const resource = await Resource.findById(req.params.id);
 
-    // Find resource and check ownership
-    const resource = await Resource.findById(resourceId);
-    if (!resource) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "Resource not found" 
-      });
-    }
+    if (!resource)
+      return res
+        .status(404)
+        .json({ success: false, message: "Resource not found" });
 
-    // Check if user owns this resource
     if (resource.uploadedBy.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ 
-        success: false, 
-        message: "You can only edit your own resources" 
+      return res.status(403).json({
+        success: false,
+        message: "You can only edit your own resources",
       });
     }
 
-    // Update resource
-    const tagArray = tags ? tags.split(",").map(t => t.trim()) : [];
-    
-    const updatedResource = await Resource.findByIdAndUpdate(
-      resourceId,
+    const updated = await Resource.findByIdAndUpdate(
+      req.params.id,
       {
         title,
         description,
-        tags: tagArray
+        tags: tags
+          ? tags.split(",").map((tag) => tag.trim().toLowerCase())
+          : resource.tags,
       },
       { new: true }
     ).populate("uploadedBy", "username email");
 
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: "Resource updated successfully",
-      resource: updatedResource 
+      resource: updated,
     });
   } catch (err) {
-    res.status(500).json({ 
-      success: false, 
-      message: err.message 
-    });
+    res.status(500).json({ message: err.message });
   }
 });
 
-// Delete resource (only by owner)
+/* ============================================================= 
+   📌 Delete Resource
+   - Checks Ownership
+   - Deletes from Cloudinary
+============================================================= */
 router.delete("/:id", authenticateToken, async (req, res) => {
   try {
-    const resourceId = req.params.id;
+    const resource = await Resource.findById(req.params.id);
 
-    // Find resource and check ownership
-    const resource = await Resource.findById(resourceId);
-    if (!resource) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "Resource not found" 
-      });
-    }
+    if (!resource)
+      return res
+        .status(404)
+        .json({ success: false, message: "Resource not found" });
 
-    // Check if user owns this resource
     if (resource.uploadedBy.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ 
-        success: false, 
-        message: "You can only delete your own resources" 
+      return res.status(403).json({
+        success: false,
+        message: "You can only delete your own resources",
       });
     }
 
-    // Delete the file from filesystem
-    const fs = await import("fs");
-    const path = await import("path");
-    const filePath = path.join(process.cwd(), resource.fileUrl);
-    
-    try {
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-    } catch (fileErr) {
-      console.error("Error deleting file:", fileErr);
-      // Continue with database deletion even if file deletion fails
-    }
+    // Remove from Cloudinary
+    await cloudinary.uploader.destroy(resource.cloudinaryId, {
+      resource_type: "auto",
+    });
 
-    // Delete from database
-    await Resource.findByIdAndDelete(resourceId);
+    // Remove from MongoDB
+    await Resource.findByIdAndDelete(req.params.id);
 
-    res.json({ 
-      success: true, 
-      message: "Resource deleted successfully" 
+    res.json({
+      success: true,
+      message: "Resource deleted successfully",
     });
   } catch (err) {
-    res.status(500).json({ 
-      success: false, 
-      message: err.message 
-    });
+    res.status(500).json({ message: err.message });
   }
 });
 

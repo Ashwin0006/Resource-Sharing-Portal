@@ -19,7 +19,7 @@ app.use("/uploads", express.static("uploads")); // serve uploaded files
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
-  .catch(err => console.error(err));
+  .catch(err => console.error(err.message));
 
 // Routes
 app.use("/api/auth", authRoutes);
