@@ -18,7 +18,7 @@ router.post(
     try {
       const { title, description, tags } = req.body;
 
-      if (!req.file || !req.file.path) {
+      if (!req.file || !req.file.secure_url) {
         return res.status(400).json({
           success: false,
           message: "File upload failed",
@@ -33,8 +33,8 @@ router.post(
         title,
         description,
         tags: tagArray,
-        fileUrl: req.file.path, // Cloudinary URL
-        cloudinaryId: req.file.filename, // Unique ID to delete later
+        fileUrl: req.file.secure_url, // FIXED — Always valid HTTPS URL
+        cloudinaryId: req.file.filename, // For deletion later
         uploadedBy: req.user._id,
         mimeType: req.file.mimetype,
         originalFileName: req.file.originalname,
@@ -106,9 +106,7 @@ router.put("/:id", authenticateToken, async (req, res) => {
     const resource = await Resource.findById(req.params.id);
 
     if (!resource)
-      return res
-        .status(404)
-        .json({ success: false, message: "Resource not found" });
+      return res.status(404).json({ success: false, message: "Resource not found" });
 
     if (resource.uploadedBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({
@@ -140,18 +138,14 @@ router.put("/:id", authenticateToken, async (req, res) => {
 });
 
 /* ============================================================= 
-   📌 Delete Resource
-   - Checks Ownership
-   - Deletes from Cloudinary
+   📌 Delete Resource (Cloudinary + MongoDB)
 ============================================================= */
 router.delete("/:id", authenticateToken, async (req, res) => {
   try {
     const resource = await Resource.findById(req.params.id);
 
     if (!resource)
-      return res
-        .status(404)
-        .json({ success: false, message: "Resource not found" });
+      return res.status(404).json({ success: false, message: "Resource not found" });
 
     if (resource.uploadedBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({
@@ -160,12 +154,12 @@ router.delete("/:id", authenticateToken, async (req, res) => {
       });
     }
 
-    // Remove from Cloudinary
+    // Remove file from Cloudinary
     await cloudinary.uploader.destroy(resource.cloudinaryId, {
       resource_type: "auto",
     });
 
-    // Remove from MongoDB
+    // Remove DB entry
     await Resource.findByIdAndDelete(req.params.id);
 
     res.json({
