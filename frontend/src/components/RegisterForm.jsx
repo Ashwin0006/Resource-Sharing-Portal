@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterForm({ onSwitchToLogin }) {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ export default function RegisterForm({ onSwitchToLogin }) {
   const [message, setMessage] = useState("");
 
   const { register } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -45,6 +47,9 @@ export default function RegisterForm({ onSwitchToLogin }) {
 
     if (!result.success) {
       setMessage(result.message);
+    }
+    else {
+      navigate("/");
     }
 
     setLoading(false);

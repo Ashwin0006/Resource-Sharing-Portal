@@ -3,8 +3,34 @@ import upload from "../middleware/upload.js";
 import Resource from "../models/Resource.js";
 import { authenticateToken } from "../middleware/auth.js";
 import { v2 as cloudinary } from "cloudinary";
+import { cacheMiddleware } from "../middleware/cache.js";
 
 const router = express.Router();
+
+router.get("/", cacheMiddleware, async (req, res) => {
+  try {
+    const { search } = req.query;
+    let query = {};
+
+    if (search) {
+      const keywords = search
+        .split(",")
+        .map((keyword) => keyword.trim())
+        .filter((keyword) => keyword.length > 0)
+        .map((keyword) => new RegExp(keyword, "i"));
+
+      query.tags = { $in: keywords };
+    }
+
+    const resources = await Resource.find(query)
+      .populate("uploadedBy", "username email")
+      .sort({ createdAt: -1 });
+
+    res.json(resources);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 /* ============================================================= 
    📌 Upload Resource (Authenticated)
@@ -53,34 +79,6 @@ router.post(
     }
   }
 );
-
-/* ============================================================= 
-   📌 Get All Public Resources
-============================================================= */
-router.get("/", async (req, res) => {
-  try {
-    const { search } = req.query;
-    let query = {};
-
-    if (search) {
-      const keywords = search
-        .split(",")
-        .map((keyword) => keyword.trim())
-        .filter((keyword) => keyword.length > 0)
-        .map((keyword) => new RegExp(keyword, "i"));
-
-      query.tags = { $in: keywords };
-    }
-
-    const resources = await Resource.find(query)
-      .populate("uploadedBy", "username email")
-      .sort({ createdAt: -1 });
-
-    res.json(resources);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
 
 /* ============================================================= 
    📌 Get Logged-in User's Resources

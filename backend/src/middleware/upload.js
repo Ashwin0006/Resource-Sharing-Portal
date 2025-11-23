@@ -15,7 +15,8 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "resource-uploads", // folder name in Cloudinary
-    resource_type: "auto", // allows PDF, docx, images, zip, etc.
+    resource_type: "auto",
+    access_mode: "public"
   },
 });
 
