@@ -1,6 +1,6 @@
 import NodeCache from "node-cache";
 
-const cache = new NodeCache({ stdTTL: 60 }); // Cache for 60 seconds
+const cache = new NodeCache({ stdTTL: 60 });
 
 export const cacheMiddleware = (req, res, next) => {
   const key = req.originalUrl;

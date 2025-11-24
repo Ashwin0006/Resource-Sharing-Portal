@@ -32,10 +32,6 @@ router.get("/", cacheMiddleware, async (req, res) => {
   }
 });
 
-/* ============================================================= 
-   📌 Upload Resource (Authenticated)
-   Supports: PDF, Images, Docs, ZIP — stored in Cloudinary
-============================================================= */
 router.post(
   "/upload",
   authenticateToken,
@@ -80,9 +76,6 @@ router.post(
   }
 );
 
-/* ============================================================= 
-   📌 Get Logged-in User's Resources
-============================================================= */
 router.get("/my-resources", authenticateToken, async (req, res) => {
   try {
     const resources = await Resource.find({ uploadedBy: req.user._id })
@@ -95,9 +88,8 @@ router.get("/my-resources", authenticateToken, async (req, res) => {
   }
 });
 
-/* ============================================================= 
-   📌 Update Resource
-============================================================= */
+
+// Update
 router.put("/:id", authenticateToken, async (req, res) => {
   try {
     const { title, description, tags } = req.body;
@@ -137,11 +129,7 @@ router.put("/:id", authenticateToken, async (req, res) => {
   }
 });
 
-/* ============================================================= 
-   📌 Delete Resource
-   - Checks Ownership
-   - Deletes from Cloudinary
-============================================================= */
+// Delete
 router.delete("/:id", authenticateToken, async (req, res) => {
   try {
     const resource = await Resource.findById(req.params.id);
@@ -160,16 +148,14 @@ router.delete("/:id", authenticateToken, async (req, res) => {
       });
     }
 
-    // 🛠 Cloudinary delete (with safety try/catch)
     try {
       await cloudinary.uploader.destroy(resource.cloudinaryId, {
-        resource_type: "raw", // since we decided PDFs only
+        resource_type: "raw",
       });
     } catch (err) {
       console.warn("Cloudinary delete failed:", err.message);
     }
 
-    // Always delete DB entry even if Cloudinary fails
     await Resource.findByIdAndDelete(resource._id);
 
     return res.json({
